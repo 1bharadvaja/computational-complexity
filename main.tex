@@ -1,0 +1,143 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+
+\title{Combinatorial Games and Computational Complexity}
+\author{Anirudh Bharadwaj }
+\date{August 2021}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+    In this paper, we briefly introduce the idea of computational complexity and its applications in Combinatorial Game Theory. We will examine several games, and their respective complexities such as the Redwood Furniture Problem derived from the game of Hackenbush. This provides an exposition on the idea of complexity when it comes to Combinatorial Games. 
+\end{abstract}
+
+\section{Introduction and Definitions}
+Computational complexity is a theoretical subfield of computer science which aims at classifying problems into how hard they are to solve given a certain amount of combinatorial objects. In the context of CGT, one such problem would be how "hard" it is to determine the winning strategy of a game. 
+\newline
+\newline
+Now, we introduce the concept of complexity classes. There are quite a few complexity classes, but the notable classes are $\texttt{P}, \texttt{NP}$, and $\texttt{PSPACE}$. It is well known that $\texttt{P} \subseteq \texttt{NP} \subseteq \texttt{PSPACE}$, meaning that problems that are in $\texttt{P}$ are also in $\texttt{NP}$ by the definition of a subset. We now define the classes mentioned previously.
+\begin{definition}
+The complexity class $P$ contains problems which can be solved in polynomial time by a Deterministic Turing Machine.  
+\end{definition}
+\begin{definition}
+The complexity class $NP$ contains problems which can be solved in polynomial time by a Non-Deterministic Turing Machine. More formally, this can be written as $\texttt{NP} = \bigcup_{k \in \mathbb{N}}{\texttt{NTIME(n^k)}}$
+\end{definition}
+
+\begin{definition}
+The complexity class $PSPACE$ contains the problems which can be solved by Turing Machines in Polynomial \textbf{space}. Similar to the $NP$ class, this can be written as $\texttt{PSPACE} = \bigcup_{k \in \mathbb{N}}{\texttt{SPACE}(n^k)}$.
+\end{definition}
+
+\begin{definition}
+If a given problem is class-X hard, it is at least as hard as the problems in class-X.
+\newline
+If the aforementioned problem is both class-X hard, and is located in class-X, it is \textbf{class-X complete}.
+\end{definition}
+
+This definition is important as it gives us an important idea - a lower bound for a problem's complexity. Additionally, note that if a problem is class-X complete, it \emph{must} be class-X hard. 
+
+\section{Computational Complexity of Go}
+So far, we have given a simple overview of complexity in a general sense. Now, we expound upon the subject with respect to combinatorial games. 
+\newline
+\newline
+The first game we analyze is Go. Before we examine the game, it is imperative to understand a standard way to prove that a certain game belongs to a certain complexity class. This method is known as reduction. The general idea is starting with a conjectured complexity class that a game could belong to. We then start with a problem known to belong to that complexity class. From there, we reduce said problem consecutively until we are able to reduce it to the game we want to prove. 
+\newline
+\newline
+A simple exposition of proving Go's complexity will now be given.
+\begin{theorem}
+Go is $\texttt{PSPACE}$ hard
+\end{theorem}
+\emph{Proof.} We start with the Quantified Boolean Formula Problem. Quantified Boolean Formula (QBF) $ = \{Q_1v_1Q_2v_2...Q_nv_nF(v_1, v_2,..., v_n)\}$ where $Q_1 = \exists$ and $Q_n = \forall$ and $Q_i \neq Q_{i+1}$. F is a boolean function using the variables. 
+\begin{lemma}
+QBF is $\texttt{PSPACE}-complete$
+\end{lemma}
+We use this lemma without proof in this paper. Readers may refer to \emph{A.R. Meyer, L.J. Stockmeyer, Word Problems Requiring Exponential Time} for a detailed proof. 
+\paragraph{Generalized Geography}.
+\newline
+\newline
+We assume prior knowledge of this game. We will use this game as our starting point of reduction after being given a QBF formula. 
+\begin{theorem}
+GG is $\texttt{PSPACE}-complete$
+\end{theorem}
+A sketch of the proof is as follows
+\paragraph \emph{Proof}. Given a QBF formula X, we can construct a graph corresponding to the Generalized Geography game of X, which we will refer to as GG(X). The graph is constructed as follows. Each variable gets its own diamond structure, and each clause in the F function is represented by a node with each node pointing to all variables within that clause.
+\newline
+\newline
+The first part of the game is passing through all the diamond structures until the game arrives at the last named node 
+\newline
+There are two players: if-any and the for-all player. One player will choose the variables corresponding to the $\forall$ and another player will choose the variables corresponding to the $\exists$.
+\newline
+Without loss of generality, suppose that the for-all player is the player that is responsible for determining which node to visit after the last variable node. Note once again that these nodes represent \emph{clauses} rather than variables now. By the definition of $\exists$, if even one node is open, then the if-any player wins. Thus, the winning strategy for for-all player is to make sure that the node they visit has a dead end. 
+\newline
+\newline
+This should seem familiar. Indeed, the if-any player's strategy can be informally noted as discovering the variables that will satisfy the QBF. 
+\newline
+\newline
+\textbf{Thus we have shown that GG is also \texttt{PSPACE}-complete}. QED. We have therefore completed the reduction from QBF to GG.
+\paragraph{Planar GG}.
+\newline
+\begin{lemma}
+Planar GG is $\texttt{PSPACE}-complete$
+\end{lemma}
+\paragraph{\emph{Proof.}} There exists a substitution which can transform every GG game into a Planar GG game. The substitution is as follows: 
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=12cm]{sub}
+    \caption{The substitution needed to transform a GG to PGG}
+    
+\end{figure}
+We do not dive deeper into the proof and construction of this equivalent PGG game, but readers may refer to \emph{D. Lichtenstein, M. Sipser, GO is Pspace Hard} for a more detailed proof. 
+
+\paragraph{Go}.
+\newline
+\newline
+The idea behind this final reduction is to show that the game Go can be used to solve any PGG problem, thus putting PGG as a lower bound on complexity for Go. Trivially, this will mean that Go is at least as hard as PGG which will provide us the result wanted. 
+
+\section{Hackenbush}
+This section assumes a basic knowledge of the game Hackenbush. The problem we examine is the computational complexity of the Red-Blue Hackenbush.
+\begin{theorem}
+Hackenbush is an NP-hard problem
+\end{theorem}
+\emph{Proof.} We first examine a specific problem in Red-Blue Hackenbush known as the Redwood Furniture Problem. \begin{figure}[htp]
+    \centering
+    \includegraphics[width=12cm]{redwoodtree}
+\end{figure}
+\begin{lemma}
+The Redwood Furniture Problem is NP-hard.
+\end{lemma}
+\emph{Proof.} We start with the fact that a piece of redwood furniture has a value of $\frac{1}{2^n}$. We also utilize the Don't-Break-It-Up theorem, which says that if there is a move for Right which leaves a piece of redwood furniture connected, then one of those moves which does so is worthwhile for Right.
+\newline
+\newline
+For a redwood furniture with value $\frac{1}{2^n}$ this means that Right has a move to $\{0 | \frac{1}{2^{n-1}}\}$. Now consider a redwood bed, which is a redwood furniture such that all the mattress edges each have one end at the top of a leg. 
+\newline
+\newline
+If you make a succession of worthwhile moves, you can prove that this redwood bed, that is a tree has value $\frac{1}{2}$
+\newline
+\newline
+If you make these worthwhile moves for as long as you can without disconnecting it, we have that a Bed = $\frac{1}{2^m}\cdot\frac{1}{2} = \frac{1}{2^{m+1}}$. In other words, to figure out the size of a redwood bed, you have to know the smallest redwood tree in the bed which contains all its legs.
+\newline
+\newline
+Thus, it follows that this problem is NP-Hard as it has been reduced.
+
+
+\begin{thebibliography}{}
+\bibitem{}
+Elwyn Berlekamp (1982), \emph{Winning Ways for Your Mathematical Plays}
+\bibitem{}
+Vasiliki - Despoina Mitsou (2014), \emph{THE COMPUTATIONAL COMPLEXITY
+OF SOME GAMES AND PUZZLES
+WITH THEORETICAL APPLICATIONS}
+\bibitem{}
+David Lichtenstein, Michael Sipser (1978), \emph{GO is pspace hard}
+\bibitem{}
+T.J. Schaefer (1976), \emph{Complexity of Decision Problems
+Based on Finite Two-Person Perfect-Information
+Games}
+\end{thebibliography}
+
+\end{document}
